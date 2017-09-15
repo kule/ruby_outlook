@@ -347,6 +347,40 @@ module RubyOutlook
       JSON.parse(create_reply_response)
     end
 
+    # token (string): access token
+    # comment (string): the comment you wish to reply to all with (can be blank)
+    # message_id (string): The Id of the message you are replying to
+    # user (string): The user to make the call for. If nil, use the 'Me' constant.
+    def send_reply_all(token, comment, message_id, user = nil)
+      request_url = "/api/v2.0/" << (user.nil? ? "Me" : ("users/" << user)) << "/Messages/" << message_id << "/replyall"
+
+      # Wrap message in the sendmail JSON structure
+      send_reply_all_json = {
+        'Comment' => comment
+      }
+
+      send_reply_all_response = make_api_call "POST", request_url, token, nil, send_reply_all_json
+
+      JSON.parse(send_reply_all_response)
+    end
+
+    # token (string): access token
+    # comment (string): the comment you wish to include (can be blank)
+    # message_id (string): The Id of the message you are replying to
+    # user (string): The user to make the call for. If nil, use the 'Me' constant.
+    def create_reply_all(token, comment, message_id, user = nil)
+      request_url = "/api/v2.0/" << (user.nil? ? "Me" : ("users/" << user)) << "/Messages/" << message_id << "/createreplyall"
+
+      # Wrap message in the sendmail JSON structure
+      create_reply_all_json = {
+        'Comment' => comment
+      }
+
+      create_reply_all_response = make_api_call "POST", request_url, token, nil, create_reply_all_json
+
+      JSON.parse(create_reply_all_response)
+    end
+
     #----- End Mail API -----#
 
     #----- Begin Calendar API -----#
