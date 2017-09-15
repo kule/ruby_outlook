@@ -381,6 +381,44 @@ module RubyOutlook
       JSON.parse(create_reply_all_response)
     end
 
+    # token (string): access token
+    # comment (string): the comment you wish to forward with (can be blank)
+    # message_id (string): The Id of the message you are replying to
+    # recipients (array of hashes): a array of JSON hashes representing the Recipients to send to
+    # user (string): The user to make the call for. If nil, use the 'Me' constant.
+    def send_foward(token, comment, message_id, recipients, user = nil)
+      request_url = "/api/v2.0/" << (user.nil? ? "Me" : ("users/" << user)) << "/Messages/" << message_id << "/forward"
+
+      # Wrap message in the sendmail JSON structure
+      send_forward_json = {
+        'Comment' => comment,
+        'ToRecipients' => recipients
+      }
+
+      send_forward_response = make_api_call "POST", request_url, token, nil, send_forward_json
+
+      JSON.parse(send_forward_response)
+    end
+
+    # token (string): access token
+    # comment (string): the comment you wish to include (can be blank)
+    # message_id (string): The Id of the message you are replying to
+    # recipients (array of hashes): a array of JSON hashes representing the Recipients to be sent to
+    # user (string): The user to make the call for. If nil, use the 'Me' constant.
+    def create_foward(token, comment, message_id, recipients, user = nil)
+      request_url = "/api/v2.0/" << (user.nil? ? "Me" : ("users/" << user)) << "/Messages/" << message_id << "/createforward"
+
+      # Wrap message in the sendmail JSON structure
+      create_forward_json = {
+        'Comment' => comment,
+        'ToRecipients' => recipients
+      }
+
+      create_forward_response = make_api_call "POST", request_url, token, nil, create_forward_json
+
+      JSON.parse(create_forward_response)
+    end
+
     #----- End Mail API -----#
 
     #----- Begin Calendar API -----#
