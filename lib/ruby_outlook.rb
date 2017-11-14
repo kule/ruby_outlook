@@ -608,5 +608,60 @@ module RubyOutlook
       JSON.parse(delete_response)
     end
     #----- End Calendar API -----#
+
+    #----- Begin Push Notification Subscription API -----#
+    # token (string): access token
+    # id (string): The Id of the subscription to retrieve
+    # fields (array): An array of field names to include in results
+    # user (string): The user to make the call for. If nil, use the 'Me' constant.
+    def get_subscription_by_id(token, id, fields = nil, user = nil)
+      request_url = "/api/v2.0/" << (user.nil? ? "Me" : ("users/" << user)) << "/subscriptions/" << id
+      request_params = nil
+
+      unless fields.nil?
+        request_params = { '$select' => fields.join(',') }
+      end
+
+      get_subscription_response = make_api_call "GET", request_url, token, request_params
+
+      JSON.parse(get_subscription_response)
+    end
+
+    # token (string): access token
+    # payload (hash): a JSON hash representing the subscription entity
+    # user (string): The user to make the call for. If nil, use the 'Me' constant.
+    def create_subscription(token, payload, user = nil)
+      request_url = "/api/v2.0/" << (user.nil? ? "Me" : ("users/" << user)) << "/subscriptions"
+
+      create_subscription_response = make_api_call "POST", request_url, token, nil, payload
+
+      JSON.parse(create_subscription_response)
+    end
+
+    # token (string): access token
+    # payload (hash): a JSON hash representing the new subscription expiration date
+    # id (string): The Id of the subscription to renew.
+    # user (string): The user to make the call for. If nil, use the 'Me' constant.
+    def renew_subscription(token, payload, id, user = nil)
+      request_url = "/api/v2.0/" << (user.nil? ? "Me" : ("users/" << user)) << "/subscriptions/" << id
+
+      renew_subscription_response = make_api_call "PATCH", request_url, token, nil, payload
+
+      JSON.parse(renew_subscription_response)
+    end
+
+    # token (string): access token
+    # id (string): The Id of the event to delete.
+    # user (string): The user to make the call for. If nil, use the 'Me' constant.
+    def delete_subscription(token, id, user = nil)
+      request_url = "/api/v2.0/" << (user.nil? ? "Me" : ("users/" << user)) << "/subscriptions/" << id
+
+      delete_response = make_api_call "DELETE", request_url, token
+
+      return nil if delete_response.nil? || delete_response.empty?
+
+      JSON.parse(delete_response)
+    end
+    #----- End Push Notification Subscription API -----#
   end
 end
